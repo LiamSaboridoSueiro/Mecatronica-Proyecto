@@ -1,152 +1,161 @@
 #include <Bluepad32.h>
 
+// Pines de hardware
+#define ENA 32 // Pin PWM para Motor A (habilitación)
+#define IN1 33 // Pin dirección Motor A
+#define IN2 25 // Pin dirección Motor A
+#define ENB 26 // Pin PWM para Motor B (habilitación)
+#define IN3 27 // Pin dirección Motor B
+#define IN4 14 // Pin dirección Motor B
+const int servoPin = 13; // Pin GPIO conectado al servo
+
 ControllerPtr myControllers[BP32_MAX_GAMEPADS];
-
-// Pines de los motores
-const int in1Pin = 14;  // Motor 1 - Dirección 1
-const int in2Pin = 27;  // Motor 1 - Dirección 2
-const int enPin1 = 25;  // Motor 1 - PWM
-
-const int in3Pin = 26;  // Motor 2 - Dirección 1
-const int in4Pin = 33;  // Motor 2 - Dirección 2
-const int enPin2 = 32;  // Motor 2 - PWM
-
-int motor1Speed = 0;    // Velocidad deseada para el motor 1
-int motor2Speed = 0;    // Velocidad deseada para el motor 2
-bool motor1Forward = true; // Dirección deseada para el motor 1
-bool motor2Forward = true; // Dirección deseada para el motor 2
 
 // Configuración de los motores
 void setupMotors() {
-    pinMode(in1Pin, OUTPUT);
-    pinMode(in2Pin, OUTPUT);
-    pinMode(enPin1, OUTPUT);
-    
-    pinMode(in3Pin, OUTPUT);
-    pinMode(in4Pin, OUTPUT);
-    pinMode(enPin2, OUTPUT);
+  // Configuración de pines para Motor A
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENA, OUTPUT);
 
-    // Configura PWM
-    ledcSetup(0, 1000, 8);  // Canal 0 para motor 1
-    ledcAttachPin(enPin1, 0);
-    ledcSetup(1, 1000, 8);  // Canal 1 para motor 2
-    ledcAttachPin(enPin2, 1);
+  // Configuración de pines para Motor B
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENB, OUTPUT);
+
+  // Inicializar ambos motores apagados
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENA, 0); // Velocidad 0 (apagado)
+  analogWrite(ENB, 0); // Velocidad 0 (apagado)
 }
 
-// Función de tarea para el motor 1
-void motor1Task(void *parameter) {
-    while (true) {
-        if (motor1Forward) {
-            digitalWrite(in1Pin, HIGH);
-            digitalWrite(in2Pin, LOW);
-        } else {
-            digitalWrite(in1Pin, LOW);
-            digitalWrite(in2Pin, HIGH);
-        }
-        ledcWrite(0, motor1Speed);  // Controla la velocidad del motor 1
-        delay(10);
-    }
-}
-
-// Función de tarea para el motor 2
-void motor2Task(void *parameter) {
-    while (true) {
-        if (motor2Forward) {
-            digitalWrite(in3Pin, HIGH);
-            digitalWrite(in4Pin, LOW);
-        } else {
-            digitalWrite(in3Pin, LOW);
-            digitalWrite(in4Pin, HIGH);
-        }
-        ledcWrite(1, motor2Speed);  // Controla la velocidad del motor 2
-        delay(10);
-    }
-}
-
-// Callback cuando se conecta un nuevo mando
-void onConnectedController(ControllerPtr ctl) {
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-        if (myControllers[i] == nullptr) {
-            Serial.printf("CALLBACK: Controller conectado, índice=%d\n", i);
-            ControllerProperties properties = ctl->getProperties();
-            Serial.printf("Modelo: %s, VID=0x%04x, PID=0x%04x\n", ctl->getModelName().c_str(), properties.vendor_id, properties.product_id);
-            myControllers[i] = ctl;
-            break;
-        }
-    }
-}
-
-// Callback cuando se desconecta un mando
-void onDisconnectedController(ControllerPtr ctl) {
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-        if (myControllers[i] == ctl) {
-            Serial.printf("CALLBACK: Controller desconectado de índice=%d\n", i);
-            myControllers[i] = nullptr;
-            break;
-        }
-    }
+// Función para mover el servo a un ángulo específico
+void moveServo(int angle) {
+  int pulseWidth = map(angle, 0, 180, 500, 2500); // Calcula el ancho del pulso en microsegundos (500-2500 us)
+  
+  // Genera un pulso de 20 ms de duración (frecuencia de 50 Hz)
+  for (int i = 0; i < 50; i++) { // 50 ciclos para garantizar estabilidad del movimiento
+    digitalWrite(servoPin, HIGH); // Pulso alto
+    delayMicroseconds(pulseWidth); // Duración del pulso según el ángulo
+    digitalWrite(servoPin, LOW); // Pulso bajo
+    delayMicroseconds(20000 - pulseWidth); // Duración del periodo restante (20 ms - pulso)
+  }
 }
 
 // Procesa el joystick para mover los motores
 void processJoystick(ControllerPtr ctl) {
-    int yAxis = ctl->axisY();  // Valor del eje Y del joystick
+  int yAxis = ctl->axisY();  // Valor del eje Y del joystick
 
-    if (yAxis < -20) {  // Hacia adelante
-        int speed = map(abs(yAxis), 0, 128, 0, 255);  // Ajusta la velocidad
-        motor1Speed = speed;
-        motor2Speed = speed;
-        motor1Forward = true;
-        motor2Forward = true;
-    } else if (yAxis > 20) {  // Hacia atrás
-        int speed = map(yAxis, 0, 128, 0, 255);  // Ajusta la velocidad
-        motor1Speed = speed;
-        motor2Speed = speed;
-        motor1Forward = false;
-        motor2Forward = false;
-    } else {
-        // Detiene los motores si el joystick está en posición neutra
-        motor1Speed = 0;
-        motor2Speed = 0;
-    }
+  if (yAxis < -20) {  // Hacia adelante
+    int speed = map(abs(yAxis), 0, 128, 0, 255);  // Ajusta la velocidad
+
+    // Motor A hacia adelante
+    digitalWrite(IN1, HIGH); 
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, speed);
+
+    // Motor B hacia adelante
+    digitalWrite(IN3, HIGH); 
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, speed);
+  } else if (yAxis > 20) {  // Hacia atrás
+    int speed = map(yAxis, 0, 128, 0, 255);  // Ajusta la velocidad
+
+    // Motor A hacia atrás
+    digitalWrite(IN1, LOW); 
+    digitalWrite(IN2, HIGH);
+    analogWrite(ENA, speed);
+
+    // Motor B hacia atrás
+    digitalWrite(IN3, LOW); 
+    digitalWrite(IN4, HIGH);
+    analogWrite(ENB, speed);
+  } else { // Detener motores
+    // Detiene Motor A
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, 0);
+
+    // Detiene Motor B
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, 0);
+  }
 }
 
-// Procesa los mandos conectados
+// Procesa el mando para detectar botón y mover el servo
 void processGamepad(ControllerPtr ctl) {
-    if (ctl->isConnected()) {
-        processJoystick(ctl);  // Procesa el joystick para mover los motores
+  processJoystick(ctl);
+
+  // Cuando se presiona el botón "A"
+  if (ctl->a()) {
+    Serial.println("Botón A presionado, moviendo servo...");
+    // Espera 1 segundo
+    moveServo(180);  // Mueve el servo al ángulo 180
+    delay(1000);     // Espera 1 segundo
+    moveServo(0);    // Devuelve el servo al ángulo 0
+  }
+}
+
+// Callback cuando se conecta un nuevo mando
+void onConnectedController(ControllerPtr ctl) {
+  for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
+    if (myControllers[i] == nullptr) {
+      Serial.printf("CALLBACK: Controller conectado, índice=%d\n", i);
+      myControllers[i] = ctl;
+      break;
     }
+  }
+}
+
+// Callback cuando se desconecta un mando
+void onDisconnectedController(ControllerPtr ctl) {
+  for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
+    if (myControllers[i] == ctl) {
+      Serial.printf("CALLBACK: Controller desconectado de índice=%d\n", i);
+      myControllers[i] = nullptr;
+      break;
+    }
+  }
 }
 
 // Procesa todos los mandos conectados
 void processControllers() {
-    for (auto myController : myControllers) {
-        if (myController && myController->isConnected() && myController->hasData() && myController->isGamepad()) {
-            processGamepad(myController);
-        }
+  for (auto myController : myControllers) {
+    if (myController && myController->isConnected() && myController->hasData() && myController->isGamepad()) {
+      processGamepad(myController);
     }
+  }
 }
 
 // Configuración inicial
 void setup() {
-    Serial.begin(115200);
-    Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
-    const uint8_t* addr = BP32.localBdAddress();
-    Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+  Serial.begin(115200);
+  Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
+  const uint8_t* addr = BP32.localBdAddress();
+  Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
 
-    BP32.setup(&onConnectedController, &onDisconnectedController);
-    BP32.forgetBluetoothKeys();
-    setupMotors();  // Configura los motores
+  BP32.setup(&onConnectedController, &onDisconnectedController);
+  BP32.forgetBluetoothKeys();
+  
+  setupMotors();  // Configura los motores
+  pinMode(servoPin, OUTPUT); // Configura el pin del servo como salida
 
-    // Inicia las tareas en hilos separados para cada motor
-    xTaskCreatePinnedToCore(motor1Task, "Motor1 Task", 1000, NULL, 1, NULL, 0);
-    xTaskCreatePinnedToCore(motor2Task, "Motor2 Task", 1000, NULL, 1, NULL, 1);
+  // Mueve el servo a la posición inicial (0 grados)
+  Serial.println("Inicializando servo a 0 grados...");
+  moveServo(0);
+  delay(1000); // Espera 1 segundo para completar el movimiento
 }
+
 
 // Bucle principal
 void loop() {
-    bool dataUpdated = BP32.update();
-    if (dataUpdated) {
-        processControllers();
-    }
-    delay(150);
+  bool dataUpdated = BP32.update();
+  if (dataUpdated) {
+    processControllers();
+  }
+  delay(20);
 }
