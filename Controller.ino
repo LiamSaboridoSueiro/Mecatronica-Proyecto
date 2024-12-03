@@ -47,44 +47,101 @@ void moveServo(int angle) {
 
 // Procesa el joystick para mover los motores
 void processJoystick(ControllerPtr ctl) {
+  int xAxis = ctl->axisX();  // Valor del eje X del joystick
   int yAxis = ctl->axisY();  // Valor del eje Y del joystick
+  int speed;
 
-  if (yAxis < -20) {  // Hacia adelante
-    int speed = map(abs(yAxis), 0, 128, 0, 255);  // Ajusta la velocidad
-
-    // Motor A hacia adelante
-    digitalWrite(IN1, HIGH); 
+  if (yAxis < -20 && abs(xAxis) < 20) {  // Delante
+    speed = map(abs(yAxis), 0, 128, 0, 255);
+    digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
     analogWrite(ENA, speed);
 
-    // Motor B hacia adelante
-    digitalWrite(IN3, HIGH); 
+    digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
     analogWrite(ENB, speed);
-  } else if (yAxis > 20) {  // Hacia atrás
-    int speed = map(yAxis, 0, 128, 0, 255);  // Ajusta la velocidad
 
-    // Motor A hacia atrás
-    digitalWrite(IN1, LOW); 
+  } else if (yAxis > 20 && abs(xAxis) < 20) {  // Atrás
+    speed = map(yAxis, 0, 128, 0, 255);
+    digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
     analogWrite(ENA, speed);
 
-    // Motor B hacia atrás
-    digitalWrite(IN3, LOW); 
+    digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
     analogWrite(ENB, speed);
-  } else { // Detener motores
-    // Detiene Motor A
+
+  } else if (xAxis > 20 && abs(yAxis) < 20) {  // Derecha
+    speed = map(xAxis, 0, 128, 0, 255);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, speed);
+
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+    analogWrite(ENB, speed);
+
+  } else if (xAxis < -20 && abs(yAxis) < 20) {  // Izquierda
+    speed = map(abs(xAxis), 0, 128, 0, 255);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    analogWrite(ENA, speed);
+
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, speed);
+
+  } else if (yAxis < -20 && xAxis > 20) {  // Delante-Derecha
+    speed = map(abs(yAxis), 0, 128, 0, 255);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, speed);
+
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, speed / 2); // Menor velocidad en un motor para girar
+
+  } else if (yAxis < -20 && xAxis < -20) {  // Delante-Izquierda
+    speed = map(abs(yAxis), 0, 128, 0, 255);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, speed / 2); // Menor velocidad en un motor para girar
+
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, speed);
+
+  } else if (yAxis > 20 && xAxis > 20) {  // Atrás-Derecha
+    speed = map(yAxis, 0, 128, 0, 255);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    analogWrite(ENA, speed);
+
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+    analogWrite(ENB, speed / 2); // Menor velocidad en un motor para girar
+
+  } else if (yAxis > 20 && xAxis < -20) {  // Atrás-Izquierda
+    speed = map(yAxis, 0, 128, 0, 255);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    analogWrite(ENA, speed / 2); // Menor velocidad en un motor para girar
+
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+    analogWrite(ENB, speed);
+
+  } else {  // Joystick neutro, detener motores
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
     analogWrite(ENA, 0);
 
-    // Detiene Motor B
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
     analogWrite(ENB, 0);
   }
 }
+
 
 // Procesa el mando para detectar botón y mover el servo
 void processGamepad(ControllerPtr ctl) {
@@ -94,9 +151,9 @@ void processGamepad(ControllerPtr ctl) {
   if (ctl->a()) {
     Serial.println("Botón A presionado, moviendo servo...");
     // Espera 1 segundo
-    moveServo(180);  // Mueve el servo al ángulo 180
+    moveServo(0);  // Mueve el servo al ángulo 180
     delay(1000);     // Espera 1 segundo
-    moveServo(0);    // Devuelve el servo al ángulo 0
+    moveServo(180);    // Devuelve el servo al ángulo 0
   }
 }
 
@@ -106,6 +163,8 @@ void onConnectedController(ControllerPtr ctl) {
     if (myControllers[i] == nullptr) {
       Serial.printf("CALLBACK: Controller conectado, índice=%d\n", i);
       myControllers[i] = ctl;
+      ctl->setColorLED(0, 110, 0); // Configura la luz del mando en verde
+      Serial.println("Luz del mando configurada en color verde");
       break;
     }
   }
@@ -146,7 +205,7 @@ void setup() {
 
   // Mueve el servo a la posición inicial (0 grados)
   Serial.println("Inicializando servo a 0 grados...");
-  moveServo(0);
+  moveServo(180);
   delay(1000); // Espera 1 segundo para completar el movimiento
 }
 
