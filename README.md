@@ -26,7 +26,7 @@ Asegúrate de contar con los siguientes componentes para replicar este proyecto:
 Para ensamblar el circuito correctamente, sigue el esquema mostrado en la imagen. Esta imagen muestra claramente cómo conectar los componentes, no te olvides de asegurarte de verificar cada conexión para evitar errores en el montaje.
 
 <div align="center">
-  <img src="https://github.com/LiamSaboridoSueiro/Mecatronica-Proyecto/blob/main/circuito/circuito_kantam.jpg" alt="circuito" width="300"/>
+  <img src="https://github.com/LiamSaboridoSueiro/Mecatronica-Proyecto/blob/main/circuito/circuito_kantam.jpg" alt="circuito" width="800"/>
 </div>
 
 ### Instrucciones para Imprimir y Montar
