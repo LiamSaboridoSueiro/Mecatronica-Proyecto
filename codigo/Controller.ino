@@ -1,3 +1,24 @@
+/*
+ * Nombre del proyecto: Kantam
+ * Copyright (C) 2024 Kantamers
+ *
+ * Este archivo es parte de Mecatronica-Proyecto.
+ *
+ * Mecatronica-Proyecto es software libre: usted puede redistribuirlo y/o modificarlo
+ * bajo los términos de la Licencia Pública General Reducida de GNU publicada
+ * por la Free Software Foundation, ya sea la versión 2.1 de la Licencia, o (a su elección)
+ * cualquier versión posterior.
+ *
+ * Mecatronica-Proyecto se distribuye con la esperanza de que sea útil,
+ * pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+ * MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte
+ * la Licencia Pública General Reducida de GNU para más detalles.
+ *
+ * Usted debería haber recibido una copia de la Licencia Pública General Reducida de GNU
+ * junto con este programa. En caso contrario, consulte <https://www.gnu.org/licenses/>.
+ */
+
+
 #include <Bluepad32.h>
 
 // Pines de hardware
