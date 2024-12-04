@@ -106,5 +106,10 @@ Tras subir el código a la placa, puedes conectar un mando **DualShock4** al ESP
 [Ver el video en YouTube](https://www.youtube.com/shorts/YCpUkMmTc64)
 
 
+### Licencia
+
+Este proyecto está licenciado bajo los términos de la [Licencia Pública General Reducida de GNU, versión 2.1](https://www.gnu.org/licenses/lgpl-2.1.html) o cualquier versión posterior a su elección.
+
+Consulte el archivo `LICENSE` en este repositorio para obtener más detalles.
 
 
