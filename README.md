@@ -2,7 +2,7 @@
 
 ¡Bienvenido a nuestro repositorio!
 
-Este proyecto de trata del robot Kantam controlado mediante un dualshock 4 utilizando un ESP32. El robot incluye movimiento direccional en 8 posiciones (adelante, atrás, izquierda, derecha y diagonales) y un puño disparable para matar a los enemigos.
+Este proyecto de trata del robot Kantam controlado mediante un dualshock 4 utilizando un ESP32. El robot incluye movimiento direccional en 8 posiciones (adelante, atrás, izquierda, derecha y diagonales) y un puño disparable para repartir justicia.
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/b60e63ab-5aaf-4f3e-bce4-c088ab06995f" alt="image" width="300"/>
@@ -25,6 +25,9 @@ Asegúrate de contar con los siguientes componentes para replicar este proyecto:
 
 Para ensamblar el circuito correctamente, sigue el esquema mostrado en la imagen. Esta imagen muestra claramente cómo conectar los componentes, no te olvides de asegurarte de verificar cada conexión para evitar errores en el montaje.
 
+<div align="center">
+  <img src="https://github.com/LiamSaboridoSueiro/Mecatronica-Proyecto/blob/main/circuito/circuito_kantam.jpg" alt="circuito" width="300"/>
+</div>
 
 ### Instrucciones para Imprimir y Montar
 
