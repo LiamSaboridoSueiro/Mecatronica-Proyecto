@@ -2,7 +2,7 @@
 
 ¡Bienvenido a **Mecatronica-Proyecto**!
 
-Este proyecto es el robot Kantam controlado mediante un dualshock 4 utilizando un ESP32. El robot incluye movimiento direccional en 8 posiciones (adelante, atrás, izquierda, derecha y diagonales) y un servo que se activa con el botón "X" del mando para disparar su puño derecho.
+Este proyecto es el robot Kantam controlado mediante un dualshock 4 utilizando un ESP32. El robot incluye movimiento direccional en 8 posiciones (adelante, atrás, izquierda, derecha y diagonales) y un puño disparable para matar a los enemigos.
 
 ## Componentes Necesarios
 
