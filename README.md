@@ -49,17 +49,17 @@ Para ensamblar el circuito correctamente, sigue el esquema mostrado en la imagen
 
 Antes de empezar, asegúrate de tener instalados y configurados los siguientes elementos:
 
-### 1. **Instalación del entorno de desarrollo**
+1. **Instalación del entorno de desarrollo**
 
 - Descarga e instala el **Arduino IDE** desde [su sitio oficial](https://www.arduino.cc/en/software).
 
-### 2. **Configuración de Board Managers**
+2. **Configuración de Board Managers**
 
 Para configurar el ESP32 y la librería **Bluepad32**, sigue estos pasos:
 
-1. Abre el **Arduino IDE**.
-2. Ve a **Archivo > Preferencias**.
-3. En el campo **Gestor de URLs Adicionales de Tarjetas**, añade los siguientes enlaces JSON:
+   1. Abre el **Arduino IDE**.
+   2. Ve a **Archivo > Preferencias**.
+   3. En el campo **Gestor de URLs Adicionales de Tarjetas**, añade los siguientes enlaces JSON:
    - **ESP32**: 
      ```
      https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
@@ -69,19 +69,19 @@ Para configurar el ESP32 y la librería **Bluepad32**, sigue estos pasos:
      https://raw.githubusercontent.com/ricardoquesada/esp32-arduino-lib-builder/master/bluepad32_files/package_esp32_bluepad32_index.json
      ```
 
-### 3. **Instalación de Librerías**
+ 3. **Instalación de Librerías**
 
 Ve a **Herramientas > Administrar bibliotecas...** y busca e instala las siguientes librerías:
 - **esp32** de **Espressif Systems**.
 - **esp32_bluepad32** de **Ricardo Quesada**.
 
-### 4. **Selección de Placa y Puerto**
+4. **Selección de Placa y Puerto**
 
 - Selecciona la placa correcta desde el menú **Herramientas > Placa**, por ejemplo:
   - **DOIT ESP32 Devkit V1** (o el modelo que estés utilizando).
 - Selecciona el puerto COM correspondiente donde está conectada la ESP32.
 
-### 5. **Guía Visual**
+5. **Guía Visual**
 
 En caso de no saber cómo realizar la configuración, puedes seguir este video explicativo:
 [Video Tutorial: Configuración de Bluepad32 y ESP32 en Arduino IDE](https://www.youtube.com/watch?v=EEViXFoSzww&t)
