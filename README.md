@@ -105,6 +105,10 @@ Tras subir el código a la placa, puedes conectar un mando **DualShock4** al ESP
 
 [Ver el video en YouTube](https://www.youtube.com/shorts/YCpUkMmTc64)
 
+### Creadores
+
+[Liam Sueiro Saborido](https://github.com/LiamSaboridoSueiro)
+[Ioana Carmen Pasca](https://github.com/ioana-pasca)
 
 ### Licencia
 
